@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+	<title>首页 | 农险</title>
+	<!-- 引入样式 -->
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+	<!-- 先引入 Vue -->
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
+	<!-- 引入组件库 -->
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+<body>
+
+	<div id="app">
+		<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal"
+				@select="handleSelect" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+			<el-menu-item index="1"><i class="el-icon-menu"></i> 我的工作台</el-menu-item>
+
+			<el-submenu index="2">
+				<template slot="title" th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}">用户</template>
+				<el-menu-item index="2-1"><a th:href="@{/logout}">退出</a></el-menu-item>
+			</el-submenu>
+		</el-menu>
+
+		<div id="test">
+			<div id="options" style="margin-top: 10px">
+				<el-button type="primary" icon="el-icon-refresh" @click="search"></el-button>
+				<el-button type="primary" icon="el-icon-edit" @click="importData">导入Excel</el-button>
+				<!--<el-button type="primary" @click="outportData">导出</el-button>-->
+			</div>
+
+			<div style="margin-top:15px">
+		  		<el-table ref="testTable" :data="tableData" style="width:100%" border>
+					<el-table-column type="selection" width="55" />
+
+					<el-table-column prop="insCode" label="险种" sortable show-overflow-tooltip />
+
+					<el-table-column prop="reportNumber" label="报案号" sortable />
+
+					<el-table-column prop="policyNumber" label="保单号" sortable />
+
+					<el-table-column prop="idCard" label="身份证" sortable />
+
+					<el-table-column prop="claimAmount" label="赔款金额" sortable />
+
+					<el-table-column prop="insured" label="被保险人" sortable />
+
+					<el-table-column prop="riskDate" label="出险日期" sortable >
+						<template scope="scope">
+							{{ dateTimeFormat(scope.row.riskDate) }}
+						</template>
+					</el-table-column>
+
+					<el-table-column prop="closingDate" label="结案日期" sortable >
+						<template scope="scope">
+							{{ dateTimeFormat(scope.row.closingDate) }}
+						</template>
+					</el-table-column>
+
+					<!--<el-table-column label="操作" width="300">-->
+					<!--</el-table-column>-->
+		  		</el-table>
+			</div>
+
+			<div align="center">
+			  <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+				  :current-page="currentPage" :page-sizes="[10, 20, 30, 40]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
+			  </el-pagination>
+		  	</div>
+		</div>
+
+		<!-- 导入 -->
+		<el-dialog title="导入Excel" :visible.sync="dialogImportVisible" :modal-append-to-body="false" :close-on-click-modal="false" class="dialog-import">
+			<el-upload class="upload-demo"
+					drag
+					action="/nx/import"
+					:before-upload="beforeUpload"
+					:on-error="uploadFail"
+					:on-success="uploadSuccess"
+					:with-credentials="withCredentials">
+				<i class="el-icon-upload"></i>
+				<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+				<div class="el-upload__tip" slot="tip">只能上传excel文件</div>
+			</el-upload>
+		</el-dialog>
+	</div>
+
+    <footer align="center">
+        <p>&copy; 新疆农险后台管理系统</p>
+    </footer>
+
+	<script>
+		var vue = new Vue({
+			el:"#app",
+		    data: {		  
+		    	//表格当前页数据
+		    	tableData: [],
+		        //请求的URL
+		        url:'nx/data',
+		        //默认每页数据量
+		        pagesize: 10,		        
+		        //当前页码
+		        currentPage: 1,
+		        //查询的页码
+		        start: 1,
+		        //默认数据总数
+		        totalCount: 100,
+                activeIndex: '1',
+
+                multipleSelection: [],
+                fileList: [],
+                withCredentials: true,
+                dialogImportVisible:false
+
+		    },
+
+		    methods: {
+		    	
+		        //从服务器读取数据
+				loadData: function(pageNum, pageSize){					
+					this.$http.get('nx/data?' + 'pageNum=' +  pageNum + '&pageSize=' + pageSize).then(function(res){
+						console.log(res)
+                		this.tableData = res.body.nx.list;
+                		this.totalCount = res.body.number;
+                	},function(){
+                  		console.log('failed');
+                	});					
+				},			    		        
+
+		        //搜索
+		        search: function(){
+		        	this.loadData(this.currentPage, this.pagesize);
+		        },
+		        
+		        //每页显示数据量变更
+		        handleSizeChange: function(val) {
+		            this.pagesize = val;
+		            this.loadData(this.currentPage, this.pagesize);
+		        },
+		        
+		        //页码变更
+		        handleCurrentChange: function(val) {
+		            this.currentPage = val;
+		            this.loadData(this.currentPage, this.pagesize);
+		        },
+
+				// 导航
+                handleSelect : function(key, keyPath) {
+                    console.log(key, keyPath);
+                },
+
+				// 时间格式转换
+                dateTimeFormat(value) {
+                    var time = new Date(+value);
+                    var rightTwo = (v) => {
+                        v = '0' + v
+                        return v.substring(v.length - 2, v.length)
+                    }
+                    if (time == null) return;
+                    var year = time.getFullYear();
+                    var month = time.getMonth() + 1;
+                    var date = time.getDate();
+                    var hours = time.getHours();
+                    var minutes = time.getMinutes();
+                    var seconds = time.getSeconds();
+//                    return year + '-' + rightTwo(month) + '-' + rightTwo(date) + ' ' + rightTwo(hours) + ':' + rightTwo(minutes) + ':' + rightTwo(seconds);
+
+                    return year + '-' + rightTwo(month) + '-' + rightTwo(date);
+                },
+
+				// 复选框
+                toggleSelection(rows) {
+                    if (rows) {
+                        rows.forEach(row => {
+                            this.$refs.multipleTable.toggleRowSelection(row);
+                        });
+                    } else {
+                        this.$refs.multipleTable.clearSelection();
+                    }
+                },
+                handleSelectionChange(val) {
+                    //复选框选择回填函数,val返回一整行的数据
+                    this.multipleSelection = val;
+                },
+                importData() {
+                    this.fileList = []
+                    this.dialogImportVisible = true
+                },
+                handleRemove(file, fileList) {
+                    //文件移除
+                    return this.$confirm(`确定移除 ${ file.name }？`);
+                },
+                beforeUpload(file){
+                    //上传前配置
+                    let excelfileExtend = ".xls,.xlsx"//设置文件格式
+                    let fileExtend = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+                    if (excelfileExtend.indexOf(fileExtend) <= -1) {
+                        this.$message.error('文件格式错误')
+                        return false
+                    }
+                },
+                //上传错误
+                uploadFail(err, file, fileList) {
+                    this.$message.error(err)
+                },
+                //上传成功
+                uploadSuccess(response, file, fileList) {
+					if(response.success) {
+						this.dialogImportVisible = false
+						this.$message.info('导入成功')
+						this.search()
+					} else {
+						this.dialogImportVisible = false
+						this.$message.error(response.message)
+					}
+                },
+		    },
+
+		  });
+	
+		  //载入数据
+		vue.loadData(vue.currentPage, vue.pagesize);
+	</script>
+	<style>
+		.el-dialog {
+			width: 21%;
+		}
+	</style>
+</body>
+</html>
