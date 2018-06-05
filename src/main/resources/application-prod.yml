@@ -20,7 +20,7 @@ spring:
     test-while-idle: true
     test-on-borrow: false
     test-on-return: false
-    url: jdbc:mysql://192.168.36.10:3306/zj_industry_qrtz?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+    url: jdbc:mysql://47.96.11.114:3306/xinjiang_nx?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
     username: root
     password: Mysql@3306
     driver-class-name: com.mysql.jdbc.Driver

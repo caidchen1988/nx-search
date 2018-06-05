@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<link>
+    <meta charset="UTF-8">
+    <title>搜索查询</title>
+
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/dist/css/layui.css"  media="all"></link>
+
+    <style>
+        .layui-tab-title li{
+            width: 50%;
+            padding: 0;
+        }
+        .layui-form-label{
+            text-align: left;
+        }
+        .layui-tab-brief>.layui-tab-title .layui-this {
+            color: #F56C6C;
+        }
+        .layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after {
+            border-bottom: 2px solid #F56C6C;
+        }
+        .layui-btn {
+            background-color: #F56C6C;
+        }
+    </style>
+</head>
+<body>
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">身份信息查询</li>
+            <li>保单号查询</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 100px;">
+            <div class="layui-tab-item layui-show">
+
+                <form class="layui-form" action="">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">身份证号码</label>
+                        <div class="layui-input-block">
+                            <input type="hidden" name="type" value="1"/>
+                            <input type="text" name="card" lay-verify="required" placeholder="请输入身份证号码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">姓名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入投保人或被投保人姓名" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <button class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="demo">提交</button>
+                    </div>
+                </form>
+
+            </div>
+            <div class="layui-tab-item">
+                <form class="layui-form" action="">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">保单号</label>
+                        <div class="layui-input-block">
+                            <input type="hidden" name="type" value="2"/>
+                            <input type="text" name="report" lay-verify="required" autocomplete="off" placeholder="请输入保单号" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">姓名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="name" lay-verify="required" placeholder="请输入投保人或被保险人姓名" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <button class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="demo1">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/dist/layui.js" charset="utf-8"></script>
+    <script>
+        //Demo
+        layui.use('form', function(){
+            var form = layui.form;
+
+            //监听提交
+            form.on('submit(demo)', function(data){
+                var type = data.field.type ;
+                var card = data.field.card ;
+                var name = data.field.name ;
+
+                layer.open({
+                    type: 2,//弹出框类型
+                    title: '查询结果',
+                    shadeClose: true, //点击遮罩关闭层
+                    area : ['100%' , '100%'],//弹出框大小
+                    shift:2,//弹出框动画效果
+                    content: '/search/detail?type='+type+'&card='+card+'&name='+name,
+                    success: function(layero, index){
+                    }
+                });
+
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>

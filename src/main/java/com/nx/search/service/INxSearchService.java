@@ -11,4 +11,8 @@ public interface INxSearchService {
     Result findAllByPage(int pageNum, int pageSize) ;
 
     Result importData(MultipartFile file) ;
+
+    Result findOnlyByIdCard(String card, String name) ;
+
+    Result findOnlyByReport(String report, String name) ;
 }

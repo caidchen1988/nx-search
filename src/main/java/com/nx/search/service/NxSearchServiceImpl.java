@@ -123,4 +123,44 @@ public class NxSearchServiceImpl implements INxSearchService {
 
         return result;
     }
+
+    @Override
+    public Result findOnlyByIdCard(String card, String name) {
+        Result result = new Result();
+        try {
+            NxSearchModel model = nxSearchMapper.findOnlyByIdCard(card, name);
+
+            result.setSuccess(true);
+            result.setData(model);
+            result.setMessage("查询成功");
+        } catch (Exception e) {
+            log.error("INxSearchService.findOnlyByIdCard --> error, message:"+e.getMessage());
+
+            result.setSuccess(false);
+            result.setMessage(e.getMessage());
+            result.setIsException(true);
+        }
+
+        return result;
+    }
+
+    @Override
+    public Result findOnlyByReport(String report, String name) {
+        Result result = new Result();
+        try {
+            NxSearchModel model = nxSearchMapper.findOnlyByReport(report, name);
+
+            result.setSuccess(true);
+            result.setData(model);
+            result.setMessage("查询成功");
+        } catch (Exception e) {
+            log.error("INxSearchService.findOnlyByReport --> error, message:"+e.getMessage());
+
+            result.setSuccess(false);
+            result.setMessage(e.getMessage());
+            result.setIsException(true);
+        }
+
+        return result;
+    }
 }

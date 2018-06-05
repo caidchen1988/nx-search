@@ -35,4 +35,11 @@
         </foreach>
     </insert>
 
+    <select id="findOnlyByIdCard" resultMap="NxSearchMap">
+        select * from nx_search WHERE insured = #{name} AND id_card = #{card}
+    </select>
+
+    <select id="findOnlyByReport" resultMap="NxSearchMap">
+        select * from nx_search WHERE insured = #{name} AND id_card = #{report}
+    </select>
 </mapper>
