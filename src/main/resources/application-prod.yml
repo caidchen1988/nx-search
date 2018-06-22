@@ -20,9 +20,9 @@ spring:
     test-while-idle: true
     test-on-borrow: false
     test-on-return: false
-    url: jdbc:mysql://47.96.11.114:3306/xinjiang_nx?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+    url: jdbc:mysql://XXXXX:3306/xinjiang_nx?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
     username: root
-    password: Mysql@3306
+    password: XXXX
     driver-class-name: com.mysql.jdbc.Driver
     pool-prepared-statements: true   # 打开PSCache
     max-open-prepared-statements: 20 # 并且指定每个连接上PSCache的大小
@@ -37,4 +37,4 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://192.168.36.33:8010/eureka
+      defaultZone: http://XXXX:8010/eureka
